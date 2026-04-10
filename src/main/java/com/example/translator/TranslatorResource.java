@@ -1,5 +1,6 @@
 package com.example.translator;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -10,7 +11,7 @@ import jakarta.ws.rs.core.MediaType;
 @Path("/translate")
 public class TranslatorResource {
 
-    private final GeminiTranslationService translationService = new GeminiTranslationService();
+    private final GeminiTranslationService service = new GeminiTranslationService();
 
     @GET
     @Path("/test")
@@ -19,9 +20,10 @@ public class TranslatorResource {
     }
 
     @POST
+    @RolesAllowed("USER")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.TEXT_PLAIN)
     public String translate(String text) {
-        return translationService.translateToDarija(text);
+        return service.translateToDarija(text);
     }
 }

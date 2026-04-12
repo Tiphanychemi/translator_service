@@ -1,0 +1,36 @@
+@startuml
+title Darija Translator - Deployment Diagram
+
+skinparam shadowing false
+skinparam roundcorner 12
+
+node "Client Device" {
+  artifact "Chrome Browser" as Browser
+  artifact "Chrome Extension\n(Manifest V3 + Side Panel)" as Extension
+  artifact "Python Client" as PythonClient
+  artifact "PHP Client" as PHPClient
+  artifact "React Native App" as MobileApp
+}
+
+node "Application Server" {
+  node "WildFly Server" {
+    artifact "translator_service.war" as War
+    component "TranslatorResource" as TR
+    component "BasicAuthFilter" as BAF
+    component "CORSFilter" as CF
+    component "GeminiTranslationService" as GTS
+  }
+}
+
+cloud "Google Gemini API" as Gemini
+
+Browser --> Extension
+Extension --> War : HTTP POST /api/translate
+PythonClient --> War : HTTP POST /api/translate
+PHPClient --> War : HTTP POST /api/translate
+MobileApp --> War : HTTP POST /api/translate
+
+War --> Gemini : translation request
+Gemini --> War : Darija response
+
+@enduml

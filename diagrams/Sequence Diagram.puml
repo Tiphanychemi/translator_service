@@ -1,0 +1,26 @@
+@startuml
+title Translation Request - Sequence Diagram
+
+actor User
+participant "Client App\n(Extension / Python / PHP / Mobile)" as Client
+participant "BasicAuthFilter" as Auth
+participant "TranslatorResource" as Resource
+participant "GeminiTranslationService" as Service
+participant "Gemini API" as Gemini
+
+User -> Client : Enter/select text
+Client -> Auth : HTTP request with credentials
+
+alt Invalid credentials
+  Auth --> Client : 401 Unauthorized
+else Valid credentials
+  Auth -> Resource : Forward request
+  Resource -> Service : translateToDarija(text)
+  Service -> Gemini : Send prompt
+  Gemini --> Service : Return Darija translation
+  Service --> Resource : Translation
+  Resource --> Client : 200 OK + translated text
+  Client --> User : Display result
+end
+
+@enduml

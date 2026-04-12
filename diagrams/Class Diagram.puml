@@ -1,0 +1,48 @@
+@startuml
+title Darija Translator - Backend Class Diagram
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam packageStyle rectangle
+
+package "com.example.translator" {
+
+  class RestApplication {
+    +getClasses() : Set<Class<?>>
+  }
+
+  class TranslatorResource {
+    -service : GeminiTranslationService
+    +test() : String
+    +translate(text : String) : String
+  }
+
+  class GeminiTranslationService {
+    -MODEL : String
+    +translateToDarija(text : String) : String
+  }
+
+  class BasicAuthFilter {
+    -USERNAME : String
+    -PASSWORD : String
+    +filter(requestContext)
+    -abort(requestContext)
+  }
+
+  class CORSFilter {
+    +doFilter(request, response, chain)
+  }
+
+  class AppAuthentication {
+    +validate(credential)
+  }
+}
+
+RestApplication --> TranslatorResource : registers
+TranslatorResource --> GeminiTranslationService : uses
+BasicAuthFilter ..> TranslatorResource : protects
+CORSFilter ..> TranslatorResource : enables cross-origin access
+AppAuthentication ..> BasicAuthFilter : supports authentication
+
+@enduml

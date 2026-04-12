@@ -4,12 +4,10 @@ import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
-import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 @Provider
@@ -22,35 +20,26 @@ public class BasicAuthFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
 
-        // 🚨 REMOVE path check (this was your problem)
-        // We protect EVERYTHING
+        // Allow browser
+        if ("OPTIONS".equalsIgnoreCase(requestContext.getMethod())) {
+            return;
+        }
 
-        String authHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
+        String authHeader = requestContext.getHeaderString("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Basic ")) {
             abort(requestContext);
             return;
         }
 
-        try {
-            String base64Credentials = authHeader.substring("Basic ".length()).trim();
-            String credentials = new String(Base64.getDecoder().decode(base64Credentials), StandardCharsets.UTF_8);
+        String encoded = authHeader.substring("Basic ".length());
+        String decoded = new String(Base64.getDecoder().decode(encoded));
 
-            String[] values = credentials.split(":", 2);
+        String[] parts = decoded.split(":", 2);
 
-            if (values.length != 2) {
-                abort(requestContext);
-                return;
-            }
-
-            String username = values[0];
-            String password = values[1];
-
-            if (!USERNAME.equals(username) || !PASSWORD.equals(password)) {
-                abort(requestContext);
-            }
-
-        } catch (Exception e) {
+        if (parts.length != 2 ||
+                !USERNAME.equals(parts[0]) ||
+                !PASSWORD.equals(parts[1])) {
             abort(requestContext);
         }
     }
@@ -58,7 +47,6 @@ public class BasicAuthFilter implements ContainerRequestFilter {
     private void abort(ContainerRequestContext requestContext) {
         requestContext.abortWith(
                 Response.status(Response.Status.UNAUTHORIZED)
-                        .header(HttpHeaders.WWW_AUTHENTICATE, "Basic realm=\"Translator\"")
                         .entity("Unauthorized")
                         .build()
         );

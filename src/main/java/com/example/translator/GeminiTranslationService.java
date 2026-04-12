@@ -18,12 +18,17 @@ public class GeminiTranslationService {
                 .apiKey(apiKey)
                 .build();
 
-        String prompt = """
-                Translate the following text from English to Moroccan Darija.
-                Return only the translated text.
 
-                Text: %s
-                """.formatted(text);
+        String prompt = """
+              Translate the following English text into Moroccan Darija.
+               Use casual spoken Moroccan Darija.
+               Do NOT use Modern/Classical Standard Arabic.
+               Use simple everyday Moroccan expressions.
+               Use latin characters,not arabic.
+               Return ONLY the translated text.
+
+Text: %s
+""".formatted(text);
 
         GenerateContentResponse response = client.models.generateContent(
                 MODEL,

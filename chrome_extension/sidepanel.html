@@ -8,15 +8,20 @@
 </head>
 <body>
 <div class="container">
-    <h2>Darija Translator</h2>
+    <h1>Darija Translator</h1>
 
     <label for="inputText">Selected Text</label>
-    <textarea id="inputText" rows="6" placeholder="Selected text will appear here..."></textarea>
+    <textarea id="inputText" rows="6"></textarea>
 
     <button id="translateBtn">Translate</button>
 
     <label for="outputText">Translation</label>
-    <textarea id="outputText" rows="6" readonly placeholder="Translation will appear here..."></textarea>
+    <textarea id="outputText" rows="6" readonly></textarea>
+
+    <div class="button-row">
+        <button id="speakBtn">Read Aloud</button>
+        <button id="stopBtn">Stop</button>
+    </div>
 
     <p id="status"></p>
 </div>

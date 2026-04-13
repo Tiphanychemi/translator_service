@@ -14,7 +14,7 @@ public class RestApplication extends Application {
         Set<Class<?>> classes = new HashSet<>();
 
         classes.add(TranslatorResource.class);
-        classes.add(BasicAuthFilter.class); // 👈 THIS IS THE FIX
+        classes.add(BasicAuthFilter.class); 
 
         return classes;
     }
